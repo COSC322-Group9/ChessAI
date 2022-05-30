@@ -19,20 +19,24 @@ public abstract class BasePlayer extends GamePlayer {
 
 	private GameBoard gameBoard = null;
 
-	private int playerColor = -1;
-	private int opponentColor = -1;
+	private int playerColor, opponentColor;
+
+	final static int WHITE_QUEEN = 1;
+	final static int BLACK_QUEEN = 2;
 
 	public BasePlayer(String username, String password) {
 		this.username = username;
 		this.password = password;
 		this.gameGUI = new BaseGameGUI(this);
 		this.playerColor = -1;
+		this.opponentColor = -1;
 	}
 
 	public int getColor() {
+		System.out.println("Get player color. Result is " + this.playerColor);
 		return this.playerColor;
 	}
-	
+
 	public GameBoard getGameBoard() {
 		return this.gameBoard;
 	}
@@ -59,7 +63,7 @@ public abstract class BasePlayer extends GamePlayer {
 	}
 
 	public void handleLose(String msg) {
-		System.out.println("[LOSE LOSE LOSE]" + msg);
+		System.out.println("[LOSE LOSE LOSE]: " + msg);
 	}
 
 	@Override
@@ -74,34 +78,41 @@ public abstract class BasePlayer extends GamePlayer {
 			this.gameGUI.setGameState(gameState);
 			break;
 		case GameMessage.GAME_ACTION_MOVE:
+			gameGUI.updateGameState(msgDetails);
 
 			Position cur = msgDetailsToPosition(msgDetails, "queen-position-current");
 			Position target = msgDetailsToPosition(msgDetails, "queen-position-next");
 			Position arrow = msgDetailsToPosition(msgDetails, "arrow-position");
 			GameAction action = new GameAction(cur, target, arrow);
+			System.out.println(action);
 
 			try {
-//				Check valid move
-				gameBoard.updateState(action, this.opponentColor);
-				gameClient.sendMoveMessage(msgDetails);
-				gameGUI.updateGameState(msgDetails);
-				this.move();
-				System.out.println("[OPPONENT RUN SUCCESS]");
+				if (gameBoard.updateState(action, this.opponentColor)) {
+					System.out.println("[OPPONENT RUN SUCCESS]");
+					this.move();
+				} else {
+					this.handleLose("Cannot update state");
+				}
 			} catch (Exception e) {
 				handleLose(e.getMessage());
 			}
 			break;
 		case GameMessage.GAME_ACTION_START:
 			String whitePlayer = (String) msgDetails.get("player-white");
+			
+			System.out.println(this.gameClient.getUserName());
+			System.out.println(whitePlayer);
+
 			if (whitePlayer.equals(this.gameClient.getUserName())) {
 //				move first
-				this.playerColor = 1;
-				this.opponentColor = 2;
-			} else {
-				this.playerColor = 2;
-				this.opponentColor = 1;
+				this.playerColor = WHITE_QUEEN;
+				this.opponentColor = BLACK_QUEEN;
 				this.move();
+			} else {
+				this.playerColor = BLACK_QUEEN;
+				this.opponentColor = WHITE_QUEEN;
 			}
+			System.out.println("PLAYERS_COLOR: 1. Player: " + this.playerColor + " 2. Opponent: " + this.opponentColor);
 			break;
 		}
 		return true;
@@ -133,3 +144,15 @@ public abstract class BasePlayer extends GamePlayer {
 	public abstract void move();
 
 }
+
+//[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+// 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0]

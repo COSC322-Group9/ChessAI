@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Position {
-	int x;
-	int y;
+	public int x;
+	public int y;
 
 	public Position(int x, int y) {
 		this.x = x;
@@ -28,5 +28,9 @@ public class Position {
 	
 	public ArrayList<Integer> toArrayList() {
 		return new ArrayList<Integer>(Arrays.asList(x, y));
+	}
+	
+	public Position copy() {
+		return new Position(this.x, this.y);
 	}
 }

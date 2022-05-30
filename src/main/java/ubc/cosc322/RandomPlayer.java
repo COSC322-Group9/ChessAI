@@ -1,13 +1,14 @@
 package ubc.cosc322;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import ygraph.ai.smartfox.games.BaseGameGUI;
 import ygraph.ai.smartfox.games.GameClient;
 
 public class RandomPlayer extends BasePlayer {
 	public RandomPlayer() {
-		super("random_player", "password");
+		super("random_player_2", "password");
 	}
 
 	public RandomPlayer(String username, String password) {
@@ -22,13 +23,26 @@ public class RandomPlayer extends BasePlayer {
 		GameBoard gameBoard = this.getGameBoard();
 
 		ArrayList<GameAction> allMoves = gameBoard.listAllActions(this.getColor());
-		int nextActionIndex = (int) Math.random() * allMoves.size();
+		if (allMoves.size() == 0) {
+			handleLose("GPU no moves");
+			return;
+		} else {
+			System.out.println("There are " + allMoves.size() + " moves");
+		}
+
+		Random rand = new Random();
+		int nextActionIndex = rand.nextInt(allMoves.size());
 		GameAction nextAction = allMoves.get(nextActionIndex);
+		System.out.println(nextAction);
 
 		try {
-			gameBoard.updateState(nextAction, this.getColor());
-			gameClient.sendMoveMessage(nextAction.getCurrentQueen(), nextAction.getTarget(), nextAction.getArrow());
+			Thread.sleep(200);
 			gameGUI.updateGameState(nextAction.getCurrentQueen(), nextAction.getTarget(), nextAction.getArrow());
+			if (gameBoard.updateState(nextAction, this.getColor())) {
+				gameClient.sendMoveMessage(nextAction.getCurrentQueen(), nextAction.getTarget(), nextAction.getArrow());
+			} else {
+				this.handleLose("Cannot update state");
+			}
 		} catch (Exception e) {
 			this.handleLose(e.getMessage());
 		}
