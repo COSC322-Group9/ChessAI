@@ -3,12 +3,129 @@ package ubc.cosc322;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import ygraph.ai.smartfox.games.GamePlayer;
+class QueenMoves {
+	final private int NUM_ROW = 11;
+	final private int NUM_COL = 11;
+
+	private boolean isInValidRange(Position pos) {
+		return 0 < pos.x && pos.x < NUM_ROW && 0 < pos.y && pos.y < NUM_COL;
+	}
+
+	private ArrayList<Position> getRightMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		int i = 1;
+		Position pos = new Position(cur.x + i, cur.y);
+		while (isInValidRange(pos) && board.canMove(pos)) {
+			res.add(pos);
+			++i;
+			pos.update(pos.x + i, pos.y);
+		}
+		return res;
+	}
+
+	private ArrayList<Position> getLeftMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		int i = 1;
+		Position pos = new Position(cur.x - i, cur.y);
+		while (isInValidRange(pos) && board.canMove(pos)) {
+			res.add(pos);
+			++i;
+			pos.update(pos.x - i, pos.y);
+		}
+		return res;
+	}
+
+	private ArrayList<Position> getUpMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		int i = 1;
+		Position pos = new Position(cur.x, cur.y + i);
+		while (isInValidRange(pos) && board.canMove(pos)) {
+			res.add(pos);
+			++i;
+			pos.update(pos.x, pos.y + i);
+		}
+		return res;
+	}
+
+	private ArrayList<Position> getDownMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		int i = 1;
+		Position pos = new Position(cur.x, cur.y - i);
+		while (isInValidRange(pos) && board.canMove(pos)) {
+			res.add(pos);
+			++i;
+			pos.update(pos.x, pos.y - i);
+		}
+		return res;
+	}
+
+	private ArrayList<Position> getUpRightMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		int i = 1;
+		Position pos = new Position(cur.x + i, cur.y + i);
+		while (isInValidRange(pos) && board.canMove(pos)) {
+			res.add(pos);
+			++i;
+			pos.update(pos.x + i, pos.y + i);
+		}
+		return res;
+	}
+
+	private ArrayList<Position> getUpLeftMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		int i = 1;
+		Position pos = new Position(cur.x - i, cur.y + i);
+		while (isInValidRange(pos) && board.canMove(pos)) {
+			res.add(pos);
+			++i;
+			pos.update(pos.x - i, pos.y + i);
+		}
+		return res;
+	}
+
+	private ArrayList<Position> getDownRightMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		int i = 1;
+		Position pos = new Position(cur.x + i, cur.y - i);
+		while (isInValidRange(pos) && board.canMove(pos)) {
+			res.add(pos);
+			++i;
+			pos.update(pos.x + i, pos.y - i);
+		}
+		return res;
+	}
+
+	private ArrayList<Position> getDownLeftMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		int i = 1;
+		Position pos = new Position(cur.x - i, cur.y - i);
+		while (isInValidRange(pos) && board.canMove(pos)) {
+			res.add(pos);
+			++i;
+			pos.update(pos.x - i, pos.y - i);
+		}
+		return res;
+	}
+
+	public ArrayList<Position> getAllMoves(GameBoard board, Position cur) {
+		ArrayList<Position> res = new ArrayList<Position>();
+		res.addAll(getRightMoves(board, cur));
+		res.addAll(getLeftMoves(board, cur));
+		res.addAll(getUpMoves(board, cur));
+		res.addAll(getDownMoves(board, cur));
+		res.addAll(getUpRightMoves(board, cur));
+		res.addAll(getUpLeftMoves(board, cur));
+		res.addAll(getDownRightMoves(board, cur));
+		res.addAll(getDownLeftMoves(board, cur));
+		return res;
+	}
+}
 
 public class GameBoard {
 
 	final public int NUM_ROW = 11;
 	final public int NUM_COL = 11;
+	final public int ARRAY_LENGTH = NUM_ROW * NUM_COL;
 	final public int NO_QUEEN = 0;
 	final public int ARROW = 3;
 
@@ -18,10 +135,10 @@ public class GameBoard {
 		this.stateArray = stateArray;
 	}
 
-	public void updateState(GameAction action, BasePlayer player) throws Exception {
+	public void updateState(GameAction action, int playerColor) throws Exception {
 //		check for exceptions
 		try {
-			action.isValid(this, player);
+			action.isValid(this, playerColor);
 		} catch (NotFoundQueenException e) {
 			System.out.println("[OPPONENT LOSE]: Invalid queen choose");
 		} catch (CannotMoveQueenException e) {
@@ -47,8 +164,7 @@ public class GameBoard {
 	}
 
 	private int getStateIndex(Position pos) {
-		System.out.println(pos.x + ' ' + pos.y + (pos.x * NUM_ROW + pos.y)); // TODO: Remove after debug
-		return pos.x * NUM_ROW + pos.y;
+		return (NUM_COL - pos.x) * NUM_ROW + pos.y;
 	}
 
 	public boolean canMove(Position pos) {
@@ -70,6 +186,39 @@ public class GameBoard {
 		ArrayList<Integer> newStateArray = this.getState();
 		Collections.swap(newStateArray, this.getStateIndex(cur), this.getStateIndex(target));
 		return new GameBoard(newStateArray);
+	}
+
+	public ArrayList<GameAction> listAllActions(int playerColor) {
+		ArrayList<GameAction> res = new ArrayList<GameAction>();
+		int i = 0, j = 0;
+		for (int val : this.getState()) {
+			if (val == playerColor) {
+				res.addAll(listAllActionsOfAQueen(new Position(i, j)));
+			}
+			i += (j + 1) % NUM_ROW; // go up every NUM_ROW times
+			j = (j + 1) / NUM_ROW; // always 0 < j < NUM_ROW
+		}
+
+		return new ArrayList<GameAction>();
+	}
+
+	private ArrayList<GameAction> listAllActionsOfAQueen(Position queen) {
+		ArrayList<GameAction> res = new ArrayList<GameAction>();
+		ArrayList<Position> allTargets = new QueenMoves().getAllMoves(this, queen);
+		for (Position target : allTargets) {
+			res.addAll(listAllArrowsOfAQueen(queen, target));
+		}
+		return res;
+	}
+
+	private ArrayList<GameAction> listAllArrowsOfAQueen(Position queen, Position target) {
+		ArrayList<GameAction> res = new ArrayList<GameAction>();
+		GameBoard newBoard = this.copyWithChange(queen, target);
+		ArrayList<Position> allMoves = new QueenMoves().getAllMoves(newBoard, target);
+		for (Position arrow : allMoves) {
+			res.add(new GameAction(queen, target, arrow));
+		}
+		return res;
 	}
 }
 

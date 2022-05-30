@@ -1,5 +1,8 @@
 package ubc.cosc322;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Position {
 	int x;
 	int y;
@@ -16,5 +19,14 @@ public class Position {
 	
 	public boolean equals(Position other) {
 		return this.x == other.x && this.y == other.y;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + this.x + ", " + this.y + "]";
+	}
+	
+	public ArrayList<Integer> toArrayList() {
+		return new ArrayList<Integer>(Arrays.asList(x, y));
 	}
 }

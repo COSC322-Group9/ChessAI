@@ -5,7 +5,8 @@ import ygraph.ai.smartfox.games.BaseGameGUI;
 public class Main {
 
 	public static void main(String[] args) {
-		BasePlayer player = new BasePlayer(args[0], args[1]);
+//		BasePlayer player = new BasePlayer(args[0], args[1]);
+		RandomPlayer player = new RandomPlayer();
 
 		if (player.getGameGUI() == null) {
 			player.Go();
