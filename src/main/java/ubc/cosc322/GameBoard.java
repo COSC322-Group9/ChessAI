@@ -14,7 +14,7 @@ class QueenMoves {
 	private ArrayList<Position> getRightMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
-		Position pos = new Position(cur.x, cur.y);
+		Position pos = new Position(cur.x + i, cur.y);
 		while (isInValidRange(pos) && board.canMove(pos)) {
 			res.add(pos.copy());
 			pos.update(pos.x + i, pos.y);
@@ -136,7 +136,6 @@ public class GameBoard {
 	}
 
 	public boolean updateState(GameAction action, int playerColor) throws Exception {
-//		check for exceptions
 		try {
 			action.isValid(this, playerColor);
 		} catch (NotFoundQueenException e) {
@@ -155,7 +154,7 @@ public class GameBoard {
 		this.stateArray.set(posNext, getStateAt(action.cur));
 		this.stateArray.set(posCur, NO_QUEEN);
 		this.stateArray.set(posArrow, ARROW);
-		
+
 		return true;
 	}
 
@@ -197,15 +196,42 @@ public class GameBoard {
 	public GameBoard copyWithChange(Position cur, Position target) {
 		@SuppressWarnings("unchecked")
 		ArrayList<Integer> newStateArray = (ArrayList<Integer>) this.getState().clone();
+
+		int temp = this.getStateAt(target);
 		newStateArray.set(this.getStateIndex(target), this.getStateAt(cur));
-		newStateArray.set(this.getStateIndex(cur), NO_QUEEN);
+		newStateArray.set(this.getStateIndex(cur), temp);
+		return new GameBoard(newStateArray);
+	}
+
+	public GameBoard copyWithChangeMove(GameAction action, int playerColor) throws Exception {
+		try {
+			action.isValid(this, playerColor);
+		} catch (NotFoundQueenException e) {
+			System.out.println("[OPPONENT LOSE]: Invalid queen choose");
+		} catch (CannotMoveQueenException e) {
+			System.out.println("[OPPONENT LOSE]: Invalid action");
+		}
+		
+		@SuppressWarnings("unchecked")
+		ArrayList<Integer> newStateArray = (ArrayList<Integer>) this.getState().clone();
+
+		int temp = this.getStateAt(action.target);
+		newStateArray.set(this.getStateIndex(action.target), this.getStateAt(action.cur));
+		newStateArray.set(this.getStateIndex(action.cur), temp);
+		newStateArray.set(this.getStateIndex(action.arrow), ARROW);
 		return new GameBoard(newStateArray);
 	}
 
 	public ArrayList<GameAction> listAllActions(int playerColor) {
 		ArrayList<GameAction> res = new ArrayList<GameAction>();
+//		int cnt = 0;
+//		for (int i = 0; i < 11; ++i) {
+//			for (int j = 0; j < 11; ++j) {
+//				System.out.print(this.stateArray.get(cnt++) + " ");
+//			}
+//			System.out.println();
+//		}
 		int i = NUM_COL, j = 0;
-		System.out.println(this.stateArray);
 		for (int index = 0; index < this.getState().size(); ++index) {
 			i = NUM_COL - index / NUM_ROW;
 			j = index % NUM_ROW;
@@ -224,7 +250,8 @@ public class GameBoard {
 		ArrayList<GameAction> res = new ArrayList<GameAction>();
 		ArrayList<Position> allTargets = new QueenMoves().getAllMoves(this, queen);
 		for (Position target : allTargets) {
-			if (target.equals(queen)) continue;
+			if (target.equals(queen))
+				continue;
 			res.addAll(listAllArrowsOfAQueen(queen, target));
 		}
 		return res;
@@ -235,7 +262,8 @@ public class GameBoard {
 		GameBoard newBoard = this.copyWithChange(queen, target);
 		ArrayList<Position> allMoves = new QueenMoves().getAllMoves(newBoard, target);
 		for (Position arrow : allMoves) {
-			if (target.equals(arrow)) continue;
+			if (target.equals(arrow))
+				continue;
 			GameAction newAction = new GameAction(queen, target, arrow);
 			res.add(newAction);
 		}
@@ -264,24 +292,3 @@ class CannotMoveQueenException extends Exception {
 		super(msg);
 	}
 }
-
-
-
-//[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 2, 0, 0, 0, 0, 0, 0, 0, 3, 2,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-// 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-// 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0]
-
-
-
-
-
-
-

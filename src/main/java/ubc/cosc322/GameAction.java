@@ -27,8 +27,8 @@ public class GameAction {
 		int v = dY == 0 ? 0 : (dY > 0 ? 1 : -1);
 
 		while (!cur.equals(target)) {
-			System.out.print(_cur + ": ");
-			System.out.println(cur + "->" + target);
+//			System.out.print(_cur + ": ");
+//			System.out.println(cur + "->" + target);
 			cur.update(cur.x + u, cur.y + v);
 			if (!board.canMove(cur) && !cur.equals(target)) return false;
 		}
@@ -38,7 +38,7 @@ public class GameAction {
 	public boolean isValid(GameBoard board, int playerColor) throws Exception {
 //		Check current position has queen
 		if (board.getStateAt(this.cur) != playerColor) {
-			System.out.println("check not same color. found" + board.getStateAt(this.cur) + " instead of " + playerColor);
+			System.out.println("check not same color. found " + board.getStateAt(this.cur) + " instead of " + playerColor);
 			throw new NotFoundQueenException();
 		}
 //		Check if target position movable

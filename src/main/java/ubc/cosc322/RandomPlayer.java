@@ -8,7 +8,8 @@ import ygraph.ai.smartfox.games.GameClient;
 
 public class RandomPlayer extends BasePlayer {
 	public RandomPlayer() {
-		super("random_player_2", "password");
+//		super("random_player_black", "password");
+		super("random_player_white", "password");
 	}
 
 	public RandomPlayer(String username, String password) {
@@ -17,6 +18,10 @@ public class RandomPlayer extends BasePlayer {
 
 	@Override
 	public void move() {
+		if (isGameEnded) {
+			return;
+		}
+		
 		// TODO Auto-generated method stub
 		GameClient gameClient = this.getGameClient();
 		BaseGameGUI gameGUI = this.getGameGUI();
@@ -24,7 +29,7 @@ public class RandomPlayer extends BasePlayer {
 
 		ArrayList<GameAction> allMoves = gameBoard.listAllActions(this.getColor());
 		if (allMoves.size() == 0) {
-			handleLose("GPU no moves");
+			handleLose("No more moves");
 			return;
 		} else {
 			System.out.println("There are " + allMoves.size() + " moves");
@@ -36,12 +41,11 @@ public class RandomPlayer extends BasePlayer {
 		System.out.println(nextAction);
 
 		try {
-			Thread.sleep(200);
 			gameGUI.updateGameState(nextAction.getCurrentQueen(), nextAction.getTarget(), nextAction.getArrow());
 			if (gameBoard.updateState(nextAction, this.getColor())) {
 				gameClient.sendMoveMessage(nextAction.getCurrentQueen(), nextAction.getTarget(), nextAction.getArrow());
 			} else {
-				this.handleLose("Cannot update state");
+				this.handleLose("Some thing wrong happened!");
 			}
 		} catch (Exception e) {
 			this.handleLose(e.getMessage());

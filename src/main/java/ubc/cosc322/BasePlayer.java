@@ -23,6 +23,8 @@ public abstract class BasePlayer extends GamePlayer {
 
 	final static int WHITE_QUEEN = 1;
 	final static int BLACK_QUEEN = 2;
+	
+	public boolean isGameEnded = false;
 
 	public BasePlayer(String username, String password) {
 		this.username = username;
@@ -33,7 +35,7 @@ public abstract class BasePlayer extends GamePlayer {
 	}
 
 	public int getColor() {
-		System.out.println("Get player color. Result is " + this.playerColor);
+//		System.out.println("Get player color. Result is " + this.playerColor);
 		return this.playerColor;
 	}
 
@@ -63,12 +65,13 @@ public abstract class BasePlayer extends GamePlayer {
 	}
 
 	public void handleLose(String msg) {
-		System.out.println("[LOSE LOSE LOSE]: " + msg);
+		System.out.println(this.userName() + " [LOSE LOSE LOSE]: " + msg);
+		this.isGameEnded = true;
 	}
 
 	@Override
 	public boolean handleGameMessage(String msgType, Map<String, Object> msgDetails) {
-		System.out.println(msgType);
+//		System.out.println(msgType);
 		System.out.println(msgDetails);
 		switch (msgType) {
 		case GameMessage.GAME_STATE_BOARD:
@@ -114,6 +117,9 @@ public abstract class BasePlayer extends GamePlayer {
 			}
 			System.out.println("PLAYERS_COLOR: 1. Player: " + this.playerColor + " 2. Opponent: " + this.opponentColor);
 			break;
+		case GameMessage.GAME_STATE_PLAYER_LOST:
+			break;
+			
 		}
 		return true;
 	}
@@ -127,7 +133,7 @@ public abstract class BasePlayer extends GamePlayer {
 		for (Room room : rooms) {
 			System.out.println(room);
 		}
-		Room chosenRoom = rooms.get(0);
+		Room chosenRoom = rooms.get(2);
 		this.gameClient.joinRoom(chosenRoom.getName());
 	}
 
