@@ -133,8 +133,8 @@ public abstract class BasePlayer extends GamePlayer {
 		for (Room room : rooms) {
 			System.out.println(room);
 		}
-		Room chosenRoom = rooms.get(2);
-		this.gameClient.joinRoom(chosenRoom.getName());
+		Room chosenRoom = rooms.get(1);
+		this.gameClient.joinRoom("Okanagan Lake");
 	}
 
 	@Override

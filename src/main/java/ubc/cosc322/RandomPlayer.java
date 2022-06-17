@@ -41,6 +41,7 @@ public class RandomPlayer extends BasePlayer {
 		System.out.println(nextAction);
 
 		try {
+			Thread.sleep(100);
 			gameGUI.updateGameState(nextAction.getCurrentQueen(), nextAction.getTarget(), nextAction.getArrow());
 			if (gameBoard.updateState(nextAction, this.getColor())) {
 				gameClient.sendMoveMessage(nextAction.getCurrentQueen(), nextAction.getTarget(), nextAction.getArrow());

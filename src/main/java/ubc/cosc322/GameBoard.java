@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 class QueenMoves {
-	final public int NUM_ROW = 11;
-	final public int NUM_COL = 11;
+	final public static int NUM_ROW = 11;
+	final public static int NUM_COL = 11;
 
-	private boolean isInValidRange(Position pos) {
+	public static boolean isInValidRange(Position pos) {
 		return 0 < pos.x && pos.x < NUM_ROW && 0 < pos.y && pos.y < NUM_COL;
 	}
 
-	private ArrayList<Position> getRightMoves(GameBoard board, Position cur) {
+	private static ArrayList<Position> getRightMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
 		Position pos = new Position(cur.x + i, cur.y);
@@ -22,7 +22,7 @@ class QueenMoves {
 		return res;
 	}
 
-	private ArrayList<Position> getLeftMoves(GameBoard board, Position cur) {
+	private static ArrayList<Position> getLeftMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
 		Position pos = new Position(cur.x - i, cur.y);
@@ -33,7 +33,7 @@ class QueenMoves {
 		return res;
 	}
 
-	private ArrayList<Position> getUpMoves(GameBoard board, Position cur) {
+	private static ArrayList<Position> getUpMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
 		Position pos = new Position(cur.x, cur.y + i);
@@ -44,7 +44,7 @@ class QueenMoves {
 		return res;
 	}
 
-	private ArrayList<Position> getDownMoves(GameBoard board, Position cur) {
+	private static ArrayList<Position> getDownMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
 		Position pos = new Position(cur.x, cur.y - i);
@@ -55,7 +55,7 @@ class QueenMoves {
 		return res;
 	}
 
-	private ArrayList<Position> getUpRightMoves(GameBoard board, Position cur) {
+	private static ArrayList<Position> getUpRightMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
 		Position pos = new Position(cur.x + i, cur.y + i);
@@ -66,7 +66,7 @@ class QueenMoves {
 		return res;
 	}
 
-	private ArrayList<Position> getUpLeftMoves(GameBoard board, Position cur) {
+	private static ArrayList<Position> getUpLeftMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
 		Position pos = new Position(cur.x - i, cur.y + i);
@@ -77,7 +77,7 @@ class QueenMoves {
 		return res;
 	}
 
-	private ArrayList<Position> getDownRightMoves(GameBoard board, Position cur) {
+	private static ArrayList<Position> getDownRightMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
 		Position pos = new Position(cur.x + i, cur.y - i);
@@ -88,7 +88,7 @@ class QueenMoves {
 		return res;
 	}
 
-	private ArrayList<Position> getDownLeftMoves(GameBoard board, Position cur) {
+	private static ArrayList<Position> getDownLeftMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 		int i = 1;
 		Position pos = new Position(cur.x - i, cur.y - i);
@@ -99,7 +99,7 @@ class QueenMoves {
 		return res;
 	}
 
-	public ArrayList<Position> getAllMoves(GameBoard board, Position cur) {
+	public static ArrayList<Position> getAllMoves(GameBoard board, Position cur) {
 		ArrayList<Position> res = new ArrayList<Position>();
 //		System.out.println("RIGHT");
 		res.addAll(getRightMoves(board, cur));
@@ -162,6 +162,10 @@ public class GameBoard {
 		return this.stateArray;
 	}
 
+	public int getStateAt(int i, int j) {
+		return this.getStateAt(new Position(i, j));
+	}
+	
 	public int getStateAt(int index) {
 		return this.stateArray.get(index);
 	}
