@@ -85,29 +85,27 @@ public class MinimaxPlayer extends BasePlayer {
 		int saveQueen = 0;
 		int killQueen = 0;
 		int oppoMove = 0;
-		int numMove = 0;
 		int executeQueen = 0;
-		int theColor = this.getColor();
+		int theColor = color;
 		for (int i = 1; i < gameBoard.NUM_COL; ++i) {
 			for (int j = 1; j < gameBoard.NUM_ROW; ++j) {
 				if (gameBoard.getStateAt(i, j) == theColor) {
 					double possibleMeMove = this.countFreeBlockAround(gameBoard, i, j);
 					if (possibleMeMove <= 2) {
-						saveQueen += 1;
+						saveQueen += 2;
 					}
-					numMove += calculateMoveAtPos(gameBoard, new Position(i, j));
 				}
 				if (gameBoard.getStateAt(i, j) == getOpponent(theColor)) {
 					double possibleOpponentMove = this.countFreeBlockAround(gameBoard, i, j);
 					if (possibleOpponentMove == 0) {
 						executeQueen += 1;
 					}
-					killQueen += 8 - possibleOpponentMove;
+					killQueen += possibleOpponentMove;
 					oppoMove += calculateMoveAtPos(gameBoard, new Position(i, j));
 				}
 			}
 		}
-		int[] res = { saveQueen, killQueen, oppoMove, numMove, executeQueen };
+		int[] res = { saveQueen, killQueen, oppoMove, executeQueen };
 		return res;
 	}
 
@@ -131,16 +129,14 @@ public class MinimaxPlayer extends BasePlayer {
 		int saveQueen = queenHeuristic[0];
 		int killQueen = queenHeuristic[1];
 		int opponentMove = queenHeuristic[2];
-		int meMove = queenHeuristic[3];
-		int executeQueen = queenHeuristic[4] * 20;
+		int executeQueen = queenHeuristic[3] * 20;
 
-		double weightSave = 2;
-		double weightKill = 8;
-		double weightOppoMove = -10;
-		double weightMeMove = 0;
+		double weightSave = 0;
+		double weightKill = 5;
+		double weightOppoMove = -8;
 
-		double heuristicValue = (meMove * weightMeMove) + (killQueen * weightKill) + (weightOppoMove * opponentMove)
-				+ (weightSave * saveQueen) + (totalMoves) + executeQueen;
+		double heuristicValue = (killQueen * weightKill) + (weightOppoMove * opponentMove) + (weightSave * saveQueen)
+				+ (totalMoves * 0.75) + executeQueen;
 
 		return new Pair<Double, GameAction>(heuristicValue, null);
 	}
@@ -157,6 +153,7 @@ public class MinimaxPlayer extends BasePlayer {
 		if (depth == 0 || allMoves.size() == 0) {
 			return calculateHeuristic(gameBoard, color, allMoves.size());
 		}
+		int newDepth = depth - 1;
 
 		// check if need maximize
 
@@ -165,12 +162,11 @@ public class MinimaxPlayer extends BasePlayer {
 			GameAction maxAction = null;
 			for (GameAction action : allMoves) {
 				if (isTimedOut()) {
-					return new Pair<Double, GameAction>(maxEvaluation, maxAction);
+					return new Pair<Double, GameAction>(null, null);
 				}
 				try {
-					Double evaluation = minimax(null, gameBoard.copyWithChangeMove(action, color), depth - 1, alpha,
+					Double evaluation = minimax(null, gameBoard.copyWithChangeMove(action, color), newDepth, alpha,
 							beta, getOpponent(color)).getKey();
-//					 System.out.println(evaluation);
 					if (!Objects.isNull(evaluation)) {
 						if (maxEvaluation < evaluation) {
 							maxEvaluation = evaluation;
@@ -180,7 +176,8 @@ public class MinimaxPlayer extends BasePlayer {
 						if (beta <= alpha)
 							break;
 					}
-				} catch (Exception _) {
+				} catch (Exception e) {
+					System.out.println(e);
 				}
 			}
 			return new Pair<Double, GameAction>(maxEvaluation, maxAction);
@@ -189,10 +186,10 @@ public class MinimaxPlayer extends BasePlayer {
 			GameAction minAction = null;
 			for (GameAction action : allMoves) {
 				if (isTimedOut()) {
-					return new Pair<Double, GameAction>(minEvaluation, minAction);
+					return new Pair<Double, GameAction>(null, null);
 				}
 				try {
-					double evaluation = minimax(null, gameBoard.copyWithChangeMove(action, color), depth - 1, alpha,
+					double evaluation = minimax(null, gameBoard.copyWithChangeMove(action, color), newDepth, alpha,
 							beta, getOpponent(color)).getKey();
 					// System.out.println(evaluation);
 					if (!Objects.isNull(evaluation)) {
@@ -231,8 +228,8 @@ public class MinimaxPlayer extends BasePlayer {
 			int depth = 1;
 			Pair<Double, GameAction> nextActionDetails;
 
-			this.bestMove = new Pair<Double, GameAction>(Double.NEGATIVE_INFINITY, null);
-			while (!isTimedOut() && depth < 1000) {
+			this.bestMove = new Pair<Double, GameAction>(Double.NEGATIVE_INFINITY, allMoves.get(0));
+			while (!isTimedOut() && depth < 10) {
 				System.out.println("Depth: " + depth);
 				nextActionDetails = this.minimax(allMoves, gameBoard, depth, // depth
 						Double.NEGATIVE_INFINITY, // alpha
@@ -240,6 +237,8 @@ public class MinimaxPlayer extends BasePlayer {
 						this.getColor());
 				System.out.println(nextActionDetails.getKey() + " " + nextActionDetails.getValue());
 				System.out.println(bestMove.getKey() + " " + bestMove.getValue());
+				if (isTimedOut())
+					break;
 				bestMove = nextActionDetails;
 				depth++;
 				allMoves = gameBoard.listAllActions(this.getColor());

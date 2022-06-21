@@ -68,6 +68,15 @@ public abstract class BasePlayer extends GamePlayer {
 		System.out.println(this.userName() + " [LOSE LOSE LOSE]: " + msg);
 		this.isGameEnded = true;
 	}
+	
+	public void handleLose(String msg, boolean me) {
+		if (!me) {
+			System.out.println("Opponent" + " [LOSE LOSE LOSE]: " + msg);
+			this.isGameEnded = true;
+		} else {
+			handleLose(msg);
+		}
+	}
 
 	@Override
 	public boolean handleGameMessage(String msgType, Map<String, Object> msgDetails) {
@@ -94,7 +103,7 @@ public abstract class BasePlayer extends GamePlayer {
 					System.out.println("[OPPONENT RUN SUCCESS]");
 					this.move();
 				} else {
-					this.handleLose("Cannot update state");
+					this.handleLose("Cannot update state", false);
 				}
 			} catch (Exception e) {
 				handleLose(e.getMessage());
@@ -134,7 +143,7 @@ public abstract class BasePlayer extends GamePlayer {
 			System.out.println(room);
 		}
 		Room chosenRoom = rooms.get(1);
-		this.gameClient.joinRoom("Okanagan Lake");
+		this.gameClient.joinRoom("Echo Lake");
 	}
 
 	@Override
