@@ -143,7 +143,7 @@ public abstract class BasePlayer extends GamePlayer {
 			System.out.println(room);
 		}
 		Room chosenRoom = rooms.get(1);
-		this.gameClient.joinRoom("Echo Lake");
+		this.gameClient.joinRoom("Wood Lake");
 	}
 
 	@Override

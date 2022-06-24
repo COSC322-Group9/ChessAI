@@ -26,7 +26,7 @@ class Pair<T1, T2> {
 }
 
 public class MinimaxPlayer extends BasePlayer {
-	private final int EXIT_TIME = 5;
+	private final int EXIT_TIME = 20;
 	private Pair<Double, GameAction> bestMove;
 	private long startTime;
 
