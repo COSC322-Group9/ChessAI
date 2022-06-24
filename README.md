@@ -1,26 +1,11 @@
 # COSC 322 - Amazons Chess AI - Group 9
 
-<div style="display:flex;justify-content:center; align-items:center; gap:.5rem;">
-<a href="https://github.com/COSC322-Group9/ChessAI">
-
-![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
-</a>
-<a>
+<div class="bandages">
 
 ![](https://img.shields.io/badge/version-final-blue)
-</a>
-<a href="https://github.com/COSC322-Group9/ChessAI/releases/tag/final">
-
 ![](https://img.shields.io/badge/language-Java-red)
-</a>
-<a href="https://github.com/COSC322-Group9/ChessAI">
-
 ![](https://img.shields.io/badge/algorithm-minimax-lightblue)
-</a>
-<a href="https://courses.students.ubc.ca/cs/courseschedule?tname=subj-course&course=322&campuscd=UBCO&dept=COSC&pname=subjarea">
-
 ![](https://img.shields.io/badge/course-COSC322-yellow)
-</a>
 </div>
 
 ## Abstract
