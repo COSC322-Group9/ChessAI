@@ -9,7 +9,7 @@
 </div>
 
 ## Abstract
-This project is the project from the course ***COSC 322: Introduction to Artificial Intelligence***. The goal of this project is to create an AI that is able to play Amazons Chess. We (group 9) implemented Minimax algorithm using Iterative Depth First Search for this project.
+This project is the project from the course ***COSC 322: Introduction to Artificial Intelligence***. The goal of this project is to create an AI that is able to play Amazons Chess. We (group 9) implemented Minimax algorithm using Iterative Deepening Depth First Search for this project.
 
 ## Amazons Chess rules
 - Game will be played between 2 teams: black and white. White will go first.
@@ -20,7 +20,7 @@ This project is the project from the course ***COSC 322: Introduction to Artific
 ## Project details
 This project can be broken down to finding the best state-space possible for the current given state-space. The best solution for this problem will be generating all possible moves from the current state and search for the best move to answer every moves of the opponent. However, this method will cost significant resources (time and space) since all the state-space possible is huge. Therefore, it will not be possible for the current configuration: **30 seconds per move** and **a Macbook Air**.
 
-As mentioned, this project used the Minimax algorithm and Iterative Depth First Search. This implementation could fit the configuration above because this can stop finding best move at a given time but still have a good enough move while only use a reasonable computational power and memory.
+As mentioned, this project used the Minimax algorithm and Iterative Deepening Depth First Search. This implementation could fit the configuration above because this can stop finding best move at a given time but still have a good enough move while only use a reasonable computational power and memory.
 ### Minimax algorithm
 Minimax algorithm simple Java implementation:
 ```java
@@ -90,7 +90,7 @@ This code using Depth First Search could perform really well to calculate the mi
 
 **All these changes have been applied in [this](https://github.com/COSC322-Group9/ChessAI/blob/main/src/main/java/ubc/cosc322/MinimaxPlayer.java) file.**
 
-### Iterative Depth First Search (IDFS)
+### Iterative Deepening Depth First Search (IDDFS)
 With the implementation above, it's easy to apply IDFS since the above function is already a depth first search controlled by a variable named `depth`. To implement this, we can intialize the variable `depth` with the value of `1` and increment this value by 1 everytime it finishes search for the current depth util running out of time. After going through each depth, we can store the `action` found in that depth as the intentional move until the new best action appear.
 ```java
 while (!isTimedOut() && depth < 10) {
@@ -112,6 +112,15 @@ while (!isTimedOut() && depth < 10) {
   depth++;
 }
 ```
+
+### Heuristic functions
+The heuristic functions I used are all feature-based heuristic. There are 4 heuristic functions:
+- **Execute queen**: Find an opponent queen and count the number of free block around it. The less block, the more recommend to execute that queen
+- **Save queen**: Find an ally queen and count the number of free block around it. The less block, the more recommend to move out of that position.
+- **All actions**: All actions of ally queens. The more move, the more recommend that action.
+- **Opponent moves**: All actions of opponent queens. The less move, the more recommend that action.
+  
+The code of these 4 heuristic functions are calculated at [here](https://github.com/COSC322-Group9/ChessAI/blob/46b5bb89bad1f587a034b5fe69e4f2a4030cbeda/src/main/java/ubc/cosc322/MinimaxPlayer.java#L84).
 
 ### Other features:
 - **Validating moves**: Check if the target move cross any queen or arrow and if they are going in the valid direction. The same is also applied for throwing arrows. [Source code](https://github.com/COSC322-Group9/ChessAI/blob/46b5bb89bad1f587a034b5fe69e4f2a4030cbeda/src/main/java/ubc/cosc322/GameAction.java#L38).
